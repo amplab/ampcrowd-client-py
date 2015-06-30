@@ -5,10 +5,9 @@ except ImportError:
     import ez_setup
     ez_setup.use_setuptools()
 from setuptools import setup, find_packages
-import ampcrowd_client
 
 setup(name="ampcrowd_client",
-      version=ampcrowd_client.__version__,
+      version="0.0.2",
       description="A python client for using the AMPCrowd service.",
       license="Apache License 2.0",
       author="Daniel Haas",
