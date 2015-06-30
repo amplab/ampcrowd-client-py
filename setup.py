@@ -9,7 +9,7 @@ import ampcrowd_client
 
 setup(name="ampcrowd_client",
       version=ampcrowd_client.__version__,
-      description="A python client for using the AMPCrowd service."
+      description="A python client for using the AMPCrowd service.",
       license="Apache License 2.0",
       author="Daniel Haas",
       author_email="dhaas@cs.berkeley.edu",
