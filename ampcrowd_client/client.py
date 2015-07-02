@@ -11,24 +11,47 @@ class AMPCrowdClient(object):
     def __init__(self, server_host, server_port=80, use_ssl=True):
         self.conn = AMPCrowdConn(server_host, server_port, use_ssl)
         self.response_server = None
+        self.responses = {}
+        self.new_point = False
+        self.new_group = False
 
     def log_level(self, level=logging.INFO):
         logger.setLevel(level)
 
-    def start_response_server(self, port, point_callback, group_callback):
-        self.response_server = AMPCrowdResponseServer(port, point_callback,
-                                                      group_callback)
+    def start_response_server(self, port):
+        self.response_server = AMPCrowdResponseServer(port, self)
         self.response_server.start()
 
-    def wait_for_responses(self):
-        logging.info("Waiting for responses from AMPCrowd...")
+    def wait_for_responses(self, until=None): # until can be 'point' or 'group'
+        self.new_point = False
+        self.new_group = False
+        until_str = ('a new %s is finished' % until
+                     if until else 'the server is stopped')
+        logging.info("Waiting for responses from AMPCrowd until %s..."
+                     % until_str)
+        stopped = False
         while True:
-            self.response_server.join(10)
+            self.response_server.join(1)
             if not self.response_server.is_alive():
+                stopped = True
+                break
+            if until == 'point' and self.new_point:
+                break
+            elif until == 'group' and self.new_group:
                 break
             logging.info("Still waiting for responses from AMPCrowd...")
-        logging.info("Server has stopped. Not waiting for responses from "
-                     "AMPCrowd anymore.")
+        done_str = ('got a new %s' % until if until and not stopped
+                    else 'server stopped')
+        logging.info("%s. Done waiting for responses from AMPCrowd." % done_str)
+
+    def _handle_new_group(self, group_id):
+        self.new_group = True
+
+    def _handle_new_point(self, group_id, identifier, value):
+        if group_id not in self.responses:
+            self.responses[group_id] = {}
+        self.responses[group_id][identifier] = value
+        self.new_point = True
 
     def stop_response_server(self):
         self.response_server.stop()
