@@ -7,7 +7,7 @@ except ImportError:
 from setuptools import setup, find_packages
 
 setup(name="ampcrowd_client",
-      version="0.0.2",
+      version="0.0.3",
       description="A python client for using the AMPCrowd service.",
       license="Apache License 2.0",
       author="Daniel Haas",
