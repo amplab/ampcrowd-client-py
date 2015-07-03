@@ -47,10 +47,10 @@ class AMPCrowdClient(object):
     def _handle_new_group(self, group_id):
         self.new_group = True
 
-    def _handle_new_point(self, group_id, identifier, value):
+    def _handle_new_point(self, group_id, identifier, **point_fields):
         if group_id not in self.responses:
             self.responses[group_id] = {}
-        self.responses[group_id][identifier] = value
+        self.responses[group_id][identifier] = point_fields
         self.new_point = True
 
     def stop_response_server(self):

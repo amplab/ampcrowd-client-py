@@ -74,11 +74,13 @@ class ResponseHandler(RequestHandler):
 
         # Send data to point callback, and store it locally
         answers = data['answers']
+        group_start_time = data['group_start_time']
         for answer in answers:
             self.GROUP_MAP[group_id][answer['identifier']] = answer
             logger.info("Calling user point callback.")
             try:
-                self.client._handle_new_point(group_id, **answer)
+                self.client._handle_new_point(
+                    group_id, group_start_time=group_start_time, **answer)
             except Exception:
                 pass
 
@@ -97,7 +99,6 @@ class ResponseHandler(RequestHandler):
         else:
             missing = registered_point_ids - processed_point_ids
             logger.debug("Still missing point ids: %s" % missing)
-
 
             unexpected = processed_point_ids - registered_point_ids
             logger.debug("Unexpected point ids: %s" % unexpected)
